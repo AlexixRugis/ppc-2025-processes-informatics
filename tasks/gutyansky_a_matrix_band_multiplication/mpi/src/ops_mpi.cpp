@@ -105,9 +105,9 @@ std::vector<int> GutyanskyAMatrixBandMultiplicationMPI::ScatterB(int rank, int w
       int col_cnt;
       GetScatterParams(i, world_size, cols_b, &col_cnt, &start_col);
 
-      for (int k = 0; k < GetInput().second.rows; k++) {
+      for (int k = 0; k < rows_b; k++) {
         for (int j = 0; j < col_cnt; j++) {
-          packed_b.push_back(GetInput().second.data[(k * GetInput().second.cols) + start_col + j]);
+          packed_b.push_back(GetInput().second.data[(k * cols_b) + start_col + j]);
         }
       }
     }
