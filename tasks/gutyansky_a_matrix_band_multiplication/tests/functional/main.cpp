@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "gutyansky_a_matrix_band_multiplication/common/include/Matrix.hpp"
 #include "gutyansky_a_matrix_band_multiplication/common/include/common.hpp"
 #include "gutyansky_a_matrix_band_multiplication/mpi/include/ops_mpi.hpp"
 #include "gutyansky_a_matrix_band_multiplication/seq/include/ops_seq.hpp"
