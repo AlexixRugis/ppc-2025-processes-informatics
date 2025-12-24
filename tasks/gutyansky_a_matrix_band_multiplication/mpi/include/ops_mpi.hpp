@@ -21,9 +21,6 @@ class GutyanskyAMatrixBandMultiplicationMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
-
-  int rank_;
-  int world_size_;
 };
 
 }  // namespace gutyansky_a_matrix_band_multiplication
