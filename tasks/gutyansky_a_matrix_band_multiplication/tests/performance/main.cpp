@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <string>
+#include <utility>
 
 #include "gutyansky_a_matrix_band_multiplication/common/include/common.hpp"
 #include "gutyansky_a_matrix_band_multiplication/common/include/matrix.hpp"
