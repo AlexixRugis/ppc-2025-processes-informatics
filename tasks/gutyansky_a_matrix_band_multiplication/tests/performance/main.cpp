@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
 #include <cstddef>
-#include <cstdint>
 #include <string>
 
 #include "gutyansky_a_matrix_band_multiplication/common/include/common.hpp"
+#include "gutyansky_a_matrix_band_multiplication/common/include/Matrix.hpp"
 #include "gutyansky_a_matrix_band_multiplication/mpi/include/ops_mpi.hpp"
 #include "gutyansky_a_matrix_band_multiplication/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"

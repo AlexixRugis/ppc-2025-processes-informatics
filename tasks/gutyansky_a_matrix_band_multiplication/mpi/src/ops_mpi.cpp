@@ -151,7 +151,7 @@ bool GutyanskyAMatrixBandMultiplicationMPI::RunImpl() {
   MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  std::array<size_t, 3> bc_sizes;
+  std::array<size_t, 3> bc_sizes{};
 
   if (rank == 0) {
     bc_sizes[0] = GetInput().first.rows;
