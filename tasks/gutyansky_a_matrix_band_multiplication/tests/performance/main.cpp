@@ -52,8 +52,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
   }
 
   void InitializeEmptyData() {
-    input_data_ =
-        std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
+    input_data_ = std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }

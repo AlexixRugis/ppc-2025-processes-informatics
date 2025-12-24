@@ -8,8 +8,8 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "gutyansky_a_matrix_band_multiplication/common/include/common.hpp"
 #include "gutyansky_a_matrix_band_multiplication/mpi/include/ops_mpi.hpp"
@@ -64,8 +64,7 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
   }
 
   void InitializeEmptyData() {
-    input_data_ =
-        std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
+    input_data_ = std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }
@@ -106,7 +105,7 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
     }
 
     input_data_ = std::make_pair(Matrix{.rows = rows_a, .cols = cols_a, .data = input_elements_a},
-                                                 Matrix{.rows = cols_a, .cols = cols_b, .data = input_elements_b});
+                                 Matrix{.rows = cols_a, .cols = cols_b, .data = input_elements_b});
     output_data_ = {.rows = rows_a, .cols = cols_b, .data = output_elements};
   }
 };
