@@ -1,6 +1,5 @@
 #include "gutyansky_a_matrix_band_multiplication/seq/include/ops_seq.hpp"
 
-#include <algorithm>
 #include <cstddef>
 #include <vector>
 

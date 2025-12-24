@@ -2,8 +2,8 @@
 
 #include <mpi.h>
 
+#include <array>
 #include <cstddef>
-#include <cstdint>
 #include <utility>
 #include <vector>
 
@@ -57,11 +57,11 @@ bool GutyanskyAMatrixBandMultiplicationMPI::PreProcessingImpl() {
 }
 
 std::vector<int> GutyanskyAMatrixBandMultiplicationMPI::ScatterA(int rank, int world_size, int rows_a, int cols_a) {
-  int local_rows_a;
-  int local_start_a;
+  int local_rows_a = 0;
+  int local_start_a = 0;
   GetScatterParams(rank, world_size, rows_a, &local_rows_a, &local_start_a);
 
-  std::vector<int> local_chunk_a(local_rows_a * cols_a);
+  std::vector<int> local_chunk_a(static_cast<size_t>(local_rows_a) * static_cast<size_t>(cols_a));
 
   if (rank == 0) {
     std::vector<int> sizes_a(world_size);
@@ -83,11 +83,11 @@ std::vector<int> GutyanskyAMatrixBandMultiplicationMPI::ScatterA(int rank, int w
 }
 
 std::vector<int> GutyanskyAMatrixBandMultiplicationMPI::ScatterB(int rank, int world_size, int rows_b, int cols_b) {
-  int local_cols_b;
-  int local_start_b;
+  int local_cols_b = 0;
+  int local_start_b = 0;
   GetScatterParams(rank, world_size, cols_b, &local_cols_b, &local_start_b);
 
-  std::vector<int> local_chunk_b(rows_b * local_cols_b);
+  std::vector<int> local_chunk_b(static_cast<size_t>(rows_b) * static_cast<size_t>(local_cols_b));
 
   if (rank == 0) {
     std::vector<int> sizes_b(world_size);
@@ -101,8 +101,8 @@ std::vector<int> GutyanskyAMatrixBandMultiplicationMPI::ScatterB(int rank, int w
     std::vector<int> packed_b;
     packed_b.reserve(GetInput().second.data.size());
     for (int i = 0; i < world_size; i++) {
-      int start_col;
-      int col_cnt;
+      int start_col = 0;
+      int col_cnt = 0;
       GetScatterParams(i, world_size, cols_b, &col_cnt, &start_col);
 
       for (int k = 0; k < rows_b; k++) {
@@ -127,7 +127,7 @@ void GutyanskyAMatrixBandMultiplicationMPI::GatherResult(int rank, int world_siz
   if (rank == 0) {
     GetOutput().rows = rows_a;
     GetOutput().cols = cols_b;
-    GetOutput().data.resize(rows_a * cols_b);
+    GetOutput().data.resize(GetOutput().rows * GetOutput().cols);
 
     std::vector<int> sizes_res(world_size);
     std::vector<int> displs_res(world_size);
@@ -146,11 +146,12 @@ void GutyanskyAMatrixBandMultiplicationMPI::GatherResult(int rank, int world_siz
 }
 
 bool GutyanskyAMatrixBandMultiplicationMPI::RunImpl() {
-  int world_size, rank;
+  int world_size = 0;
+  int rank = 0;
   MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  size_t bc_sizes[3];
+  std::array<int, 3> bc_sizes;
 
   if (rank == 0) {
     bc_sizes[0] = GetInput().first.rows;
@@ -158,28 +159,28 @@ bool GutyanskyAMatrixBandMultiplicationMPI::RunImpl() {
     bc_sizes[2] = GetInput().second.cols;
   }
 
-  MPI_Bcast(bc_sizes, 3, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+  MPI_Bcast(bc_sizes.data(), 3, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
-  int local_rows_a;
-  int local_start_a;
-  GetScatterParams(rank, world_size, bc_sizes[0], &local_rows_a, &local_start_a);
-  int local_cols_b;
-  int local_start_b;
-  GetScatterParams(rank, world_size, bc_sizes[2], &local_cols_b, &local_start_b);
+  int rows_a = static_cast<int>(bc_sizes[0]);
+  int cols_a = static_cast<int>(bc_sizes[1]);
+  int rows_b = static_cast<int>(bc_sizes[1]);
+  int cols_b = static_cast<int>(bc_sizes[2]);
 
-  int rows_a = bc_sizes[0];
-  int cols_a = bc_sizes[1];
-  int rows_b = bc_sizes[1];
-  int cols_b = bc_sizes[2];
+  int local_rows_a = 0;
+  int local_start_a = 0;
+  GetScatterParams(rank, world_size, rows_a, &local_rows_a, &local_start_a);
+  int local_cols_b = 0;
+  int local_start_b = 0;
+  GetScatterParams(rank, world_size, cols_b, &local_cols_b, &local_start_b);
 
   std::vector<int> local_chunk_a = ScatterA(rank, world_size, rows_a, cols_a);
   std::vector<int> local_chunk_b = ScatterB(rank, world_size, rows_b, cols_b);
-  std::vector<int> res_buffer(local_rows_a * cols_b, 0);
+  std::vector<int> res_buffer(static_cast<size_t>(local_rows_a) * static_cast<size_t>(cols_b), 0);
   std::vector<int> rotation_buffer;
 
   for (int it = 0; it < world_size; it++) {
-    int col_count;
-    int start_col;
+    int col_count = 0;
+    int start_col = 0;
     GetScatterParams((rank + it) % world_size, world_size, cols_b, &col_count, &start_col);
 
     for (int i = 0; i < local_rows_a; i++) {
@@ -191,10 +192,10 @@ bool GutyanskyAMatrixBandMultiplicationMPI::RunImpl() {
       }
     }
 
-    int next_col_size;
-    int next_col_start;
+    int next_col_size = 0;
+    int next_col_start = 0;
     GetScatterParams((rank + it + 1) % world_size, world_size, cols_b, &next_col_size, &next_col_start);
-    rotation_buffer.resize(rows_b * next_col_size);
+    rotation_buffer.resize(static_cast<size_t>(rows_b) * static_cast<size_t>(next_col_size));
     MPI_Sendrecv(local_chunk_b.data(), static_cast<int>(local_chunk_b.size()), MPI_INT,
                  (world_size + rank - 1) % world_size, 0, rotation_buffer.data(),
                  static_cast<int>(rotation_buffer.size()), MPI_INT, (rank + 1) % world_size, 0, MPI_COMM_WORLD,

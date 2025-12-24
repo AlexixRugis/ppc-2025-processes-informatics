@@ -37,7 +37,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
 
  private:
   const size_t kSize_ = 1000;
-  InType input_data_ = {};
+  InType input_data_;
   OutType output_data_ = {};
 
   [[nodiscard]] static bool ShouldLoadDataAndTest() {
@@ -53,7 +53,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
 
   void InitializeEmptyData() {
     input_data_ =
-        std::make_pair<Matrix, Matrix>({.rows = 0, .cols = 0, .data = {}}, {.rows = 0, .cols = 0, .data = {}});
+        std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }
@@ -65,7 +65,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
 
     for (size_t i = 0; i < kSize_; i++) {
       for (size_t j = 0; j < kSize_; j++) {
-        input_data_.first.data[(i * kSize_) + j] = i + 1;
+        input_data_.first.data[(i * kSize_) + j] = static_cast<int>(i + 1);
       }
     }
 
@@ -75,7 +75,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
 
     for (size_t i = 0; i < kSize_; i++) {
       for (size_t j = 0; j < kSize_; j++) {
-        input_data_.second.data[(i * kSize_) + j] = j + 1;
+        input_data_.second.data[(i * kSize_) + j] = static_cast<int>(j + 1);
       }
     }
 
@@ -85,7 +85,7 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
 
     for (size_t i = 0; i < kSize_; i++) {
       for (size_t j = 0; j < kSize_; j++) {
-        output_data_.data[(i * kSize_) + j] = (i + 1) * (j + 1) * kSize_;
+        output_data_.data[(i * kSize_) + j] = static_cast<int>((i + 1) * (j + 1) * kSize_);
       }
     }
   }

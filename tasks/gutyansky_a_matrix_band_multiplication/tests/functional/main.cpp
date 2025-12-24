@@ -9,6 +9,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <utility>
 
 #include "gutyansky_a_matrix_band_multiplication/common/include/common.hpp"
 #include "gutyansky_a_matrix_band_multiplication/mpi/include/ops_mpi.hpp"
@@ -48,7 +49,7 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
   }
 
  private:
-  InType input_data_ = {};
+  InType input_data_;
   OutType output_data_ = {};
 
   [[nodiscard]] static bool ShouldLoadDataAndTest() {
@@ -64,7 +65,7 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
 
   void InitializeEmptyData() {
     input_data_ =
-        std::make_pair<Matrix, Matrix>({.rows = 0, .cols = 0, .data = {}}, {.rows = 0, .cols = 0, .data = {}});
+        std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }
@@ -104,8 +105,8 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
       ifs >> output_elements[i];
     }
 
-    input_data_ = std::make_pair<Matrix, Matrix>({.rows = rows_a, .cols = cols_a, .data = input_elements_a},
-                                                 {.rows = cols_a, .cols = cols_b, .data = input_elements_b});
+    input_data_ = std::make_pair(Matrix{.rows = rows_a, .cols = cols_a, .data = input_elements_a},
+                                                 Matrix{.rows = cols_a, .cols = cols_b, .data = input_elements_b});
     output_data_ = {.rows = rows_a, .cols = cols_b, .data = output_elements};
   }
 };

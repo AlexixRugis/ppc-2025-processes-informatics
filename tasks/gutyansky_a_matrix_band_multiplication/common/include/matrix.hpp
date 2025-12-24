@@ -9,8 +9,8 @@
 namespace gutyansky_a_matrix_band_multiplication {
 
 struct Matrix {
-  size_t rows;
-  size_t cols;
+  size_t rows = 0;
+  size_t cols = 0;
   std::vector<int32_t> data;
 
   [[nodiscard]] bool IsValid() const {
