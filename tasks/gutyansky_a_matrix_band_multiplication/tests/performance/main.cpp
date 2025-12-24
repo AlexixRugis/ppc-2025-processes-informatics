@@ -52,10 +52,8 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
   }
 
   void InitializeEmptyData() {
-    input_data_ = std::make_pair<Matrix, Matrix>(
-      {.rows = 0, .cols = 0, .data = {}},
-      {.rows = 0, .cols = 0, .data = {}}
-    );
+    input_data_ =
+        std::make_pair<Matrix, Matrix>({.rows = 0, .cols = 0, .data = {}}, {.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }
@@ -66,9 +64,9 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
     input_data_.first.data.resize(kSize_ * kSize_);
 
     for (size_t i = 0; i < kSize_; i++) {
-        for (size_t j = 0; j < kSize_; j++) {
-            input_data_.first.data[(i * kSize_) + j] = i + 1;
-        }
+      for (size_t j = 0; j < kSize_; j++) {
+        input_data_.first.data[(i * kSize_) + j] = i + 1;
+      }
     }
 
     input_data_.second.rows = kSize_;
@@ -76,9 +74,9 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
     input_data_.second.data.resize(kSize_ * kSize_);
 
     for (size_t i = 0; i < kSize_; i++) {
-        for (size_t j = 0; j < kSize_; j++) {
-            input_data_.second.data[(i * kSize_) + j] = j + 1;
-        }
+      for (size_t j = 0; j < kSize_; j++) {
+        input_data_.second.data[(i * kSize_) + j] = j + 1;
+      }
     }
 
     output_data_.rows = kSize_;
@@ -86,9 +84,9 @@ class GutyanskyAMatrixBandMultiplicationPerfTest : public ppc::util::BaseRunPerf
     output_data_.data.resize(kSize_ * kSize_);
 
     for (size_t i = 0; i < kSize_; i++) {
-        for (size_t j = 0; j < kSize_; j++) {
-            output_data_.data[(i * kSize_) + j] = (i + 1) * (j + 1) * kSize_;
-        }
+      for (size_t j = 0; j < kSize_; j++) {
+        output_data_.data[(i * kSize_) + j] = (i + 1) * (j + 1) * kSize_;
+      }
     }
   }
 };

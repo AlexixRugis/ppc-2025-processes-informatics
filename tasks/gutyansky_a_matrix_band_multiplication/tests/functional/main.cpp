@@ -63,10 +63,8 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
   }
 
   void InitializeEmptyData() {
-    input_data_ = std::make_pair<Matrix, Matrix>(
-      {.rows = 0, .cols = 0, .data = {}},
-      {.rows = 0, .cols = 0, .data = {}}
-    );
+    input_data_ =
+        std::make_pair<Matrix, Matrix>({.rows = 0, .cols = 0, .data = {}}, {.rows = 0, .cols = 0, .data = {}});
 
     output_data_ = {.rows = 0, .cols = 0, .data = {}};
   }
@@ -103,13 +101,11 @@ class GutyanskyAMatrixBandMultiplicationFuncTests : public ppc::util::BaseRunFun
 
     std::vector<int32_t> output_elements(rows_a * cols_b);
     for (size_t i = 0; i < output_elements.size(); i++) {
-        ifs >> output_elements[i];
+      ifs >> output_elements[i];
     }
 
-    input_data_ = std::make_pair<Matrix, Matrix>(
-        {.rows = rows_a, .cols = cols_a, .data = input_elements_a},
-        {.rows = cols_a, .cols = cols_b, .data = input_elements_b}
-    );
+    input_data_ = std::make_pair<Matrix, Matrix>({.rows = rows_a, .cols = cols_a, .data = input_elements_a},
+                                                 {.rows = cols_a, .cols = cols_b, .data = input_elements_b});
     output_data_ = {.rows = rows_a, .cols = cols_b, .data = output_elements};
   }
 };
@@ -120,7 +116,8 @@ TEST_P(GutyanskyAMatrixBandMultiplicationFuncTests, MatrixBandMultiplication) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 9> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5", "test_6", "test_7", "test_8", "test_9"};
+const std::array<TestType, 9> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5",
+                                            "test_6", "test_7", "test_8", "test_9"};
 
 const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<GutyanskyAMatrixBandMultiplicationMPI, InType>(
                                                kTestParam, PPC_SETTINGS_gutyansky_a_matrix_band_multiplication),
@@ -129,7 +126,8 @@ const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<GutyanskyAMatr
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
-const auto kPerfTestName = GutyanskyAMatrixBandMultiplicationFuncTests::PrintFuncTestName<GutyanskyAMatrixBandMultiplicationFuncTests>;
+const auto kPerfTestName =
+    GutyanskyAMatrixBandMultiplicationFuncTests::PrintFuncTestName<GutyanskyAMatrixBandMultiplicationFuncTests>;
 
 INSTANTIATE_TEST_SUITE_P(ColumnSumTests, GutyanskyAMatrixBandMultiplicationFuncTests, kGtestValues, kPerfTestName);
 
