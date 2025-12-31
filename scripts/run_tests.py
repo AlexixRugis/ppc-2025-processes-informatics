@@ -231,18 +231,14 @@ class PPCRunner:
     def run_performance(self):
         if not self.__ppc_env.get("PPC_ASAN_RUN"):
             mpi_running = self.__build_mpi_cmd(self.__ppc_num_proc, "")
-            for task_type in [
-                "mpi",
-            ]:
+            for task_type in ["all", "mpi"]:
                 self.__run_exec(
                     mpi_running
                     + [str(self.work_dir / "ppc_perf_tests")]
                     + self.__get_gtest_settings(1, "_" + task_type + "_")
                 )
 
-        for task_type in [
-            "seq",
-        ]:
+        for task_type in ["omp", "seq", "stl", "tbb"]:
             self.__run_exec(
                 [str(self.work_dir / "ppc_perf_tests")]
                 + self.__get_gtest_settings(1, "_" + task_type + "_")
