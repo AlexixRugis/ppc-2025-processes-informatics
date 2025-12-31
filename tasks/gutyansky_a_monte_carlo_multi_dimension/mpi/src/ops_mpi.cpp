@@ -111,7 +111,7 @@ bool GutyanskyAMonteCarloMultiDimensionMPI::RunImpl() {
 
   size_t size = 0;
 
-  if (rank < remainder_size) {
+  if (static_cast<size_t>(rank) < remainder_size) {
     size = chunk_size + 1;
   } else {
     size = chunk_size;
