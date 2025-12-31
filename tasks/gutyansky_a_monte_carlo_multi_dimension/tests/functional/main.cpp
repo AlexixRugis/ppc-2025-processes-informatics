@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
-#include "gutyansky_a_monte_carlo_multi_dimension/common/include/matrix.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/mpi/include/ops_mpi.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/seq/include/ops_seq.hpp"
 #include "util/include/func_test_util.hpp"
@@ -38,8 +37,10 @@ class GutyanskyAMonteCarloMultiDimensionFuncTests : public ppc::util::BaseRunFun
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
+    const double eps = 1e-2;
+
     if (ShouldLoadDataAndTest()) {
-      return output_data_ == output_data;
+      return std::abs(output_data - output_data_) <= eps;
     }
 
     return true;
@@ -65,9 +66,8 @@ class GutyanskyAMonteCarloMultiDimensionFuncTests : public ppc::util::BaseRunFun
   }
 
   void InitializeEmptyData() {
-    input_data_ = std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
-
-    output_data_ = {.rows = 0, .cols = 0, .data = {}};
+    input_data_ = {};
+    output_data_ = 0.0;
   }
 
   void LoadTestDataFromFile() {
@@ -81,33 +81,31 @@ class GutyanskyAMonteCarloMultiDimensionFuncTests : public ppc::util::BaseRunFun
       throw std::runtime_error("Failed to open test file: " + file_name);
     }
 
-    size_t rows_a = 0;
-    size_t cols_a = 0;
-    size_t cols_b = 0;
-    ifs >> rows_a >> cols_a >> cols_b;
+    size_t func_id = 0;
+    size_t n_dims = 0;
+    size_t n_points = 0;
+    ifs >> func_id >> n_dims >> n_points;
 
-    if (rows_a == 0 || cols_a == 0 || cols_b == 0) {
-      throw std::runtime_error("All dimensions of matrices must be positive integers");
+    std::vector<double> lower_bounds(n_dims);
+    std::vector<double> upper_bounds(n_dims);
+
+    for (auto &val : lower_bounds) {
+      ifs >> val;
     }
 
-    std::vector<int32_t> input_elements_a(rows_a * cols_a);
-    for (size_t i = 0; i < input_elements_a.size(); i++) {
-      ifs >> input_elements_a[i];
+    for (auto &val : upper_bounds) {
+      ifs >> val;
     }
 
-    std::vector<int32_t> input_elements_b(cols_a * cols_b);
-    for (size_t i = 0; i < input_elements_b.size(); i++) {
-      ifs >> input_elements_b[i];
-    }
+    double res = 0.0;
+    ifs >> res;
 
-    std::vector<int32_t> output_elements(rows_a * cols_b);
-    for (size_t i = 0; i < output_elements.size(); i++) {
-      ifs >> output_elements[i];
-    }
-
-    input_data_ = std::make_pair(Matrix{.rows = rows_a, .cols = cols_a, .data = input_elements_a},
-                                 Matrix{.rows = cols_a, .cols = cols_b, .data = input_elements_b});
-    output_data_ = {.rows = rows_a, .cols = cols_b, .data = output_elements};
+    input_data_ = {.func_id = func_id,
+                   .n_dims = n_dims,
+                   .lower_bounds = std::move(lower_bounds),
+                   .upper_bounds = std::move(upper_bounds),
+                   .n_points = n_points};
+    output_data_ = res;
   }
 };
 
@@ -117,8 +115,7 @@ TEST_P(GutyanskyAMonteCarloMultiDimensionFuncTests, MonteCarloMultiDimension) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 9> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5",
-                                            "test_6", "test_7", "test_8", "test_9"};
+const std::array<TestType, 7> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5", "test_6", "test_7"};
 
 const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<GutyanskyAMonteCarloMultiDimensionMPI, InType>(
                                                kTestParam, PPC_SETTINGS_gutyansky_a_monte_carlo_multi_dimension),

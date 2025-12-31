@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
 #include <cstddef>
+#include <numbers>
 #include <string>
 #include <utility>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
-#include "gutyansky_a_monte_carlo_multi_dimension/common/include/matrix.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/mpi/include/ops_mpi.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
@@ -25,8 +25,10 @@ class GutyanskyAMonteCarloMultiDimensionPerfTest : public ppc::util::BaseRunPerf
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
+    const double eps = 1e-2;
+
     if (ShouldLoadDataAndTest()) {
-      return output_data_ == output_data;
+      return std::abs(output_data - output_data_) <= eps;
     }
 
     return true;
@@ -37,9 +39,9 @@ class GutyanskyAMonteCarloMultiDimensionPerfTest : public ppc::util::BaseRunPerf
   }
 
  private:
-  const size_t kSize_ = 1000;
-  InType input_data_;
-  OutType output_data_ = {};
+  const size_t kSize_ = 8000000;
+  InType input_data_ = {};
+  OutType output_data_ = 0.0;
 
   [[nodiscard]] static bool ShouldLoadDataAndTest() {
     const std::string &test_name =
@@ -53,41 +55,21 @@ class GutyanskyAMonteCarloMultiDimensionPerfTest : public ppc::util::BaseRunPerf
   }
 
   void InitializeEmptyData() {
-    input_data_ = std::make_pair(Matrix{.rows = 0, .cols = 0, .data = {}}, Matrix{.rows = 0, .cols = 0, .data = {}});
-
-    output_data_ = {.rows = 0, .cols = 0, .data = {}};
+    input_data_ = {};
+    output_data_ = 0.0;
   }
 
   void LoadTestData() {
-    input_data_.first.rows = kSize_;
-    input_data_.first.cols = kSize_;
-    input_data_.first.data.resize(kSize_ * kSize_);
-
-    for (size_t i = 0; i < kSize_; i++) {
-      for (size_t j = 0; j < kSize_; j++) {
-        input_data_.first.data[(i * kSize_) + j] = static_cast<int>(i + 1);
-      }
-    }
-
-    input_data_.second.rows = kSize_;
-    input_data_.second.cols = kSize_;
-    input_data_.second.data.resize(kSize_ * kSize_);
-
-    for (size_t i = 0; i < kSize_; i++) {
-      for (size_t j = 0; j < kSize_; j++) {
-        input_data_.second.data[(i * kSize_) + j] = static_cast<int>(j + 1);
-      }
-    }
-
-    output_data_.rows = kSize_;
-    output_data_.cols = kSize_;
-    output_data_.data.resize(kSize_ * kSize_);
-
-    for (size_t i = 0; i < kSize_; i++) {
-      for (size_t j = 0; j < kSize_; j++) {
-        output_data_.data[(i * kSize_) + j] = static_cast<int>((i + 1) * (j + 1) * kSize_);
-      }
-    }
+    input_data_.func_id = 6;
+    input_data_.n_dims = 2;
+    input_data_.n_points = kSize_;
+    input_data_.lower_bounds.resize(2);
+    input_data_.lower_bounds[0] = -1.0;
+    input_data_.lower_bounds[1] = -1.0;
+    input_data_.upper_bounds.resize(2);
+    input_data_.upper_bounds[0] = 1.0;
+    input_data_.upper_bounds[1] = 1.0;
+    output_data_ = std::numbers::pi_v<double>;
   }
 };
 

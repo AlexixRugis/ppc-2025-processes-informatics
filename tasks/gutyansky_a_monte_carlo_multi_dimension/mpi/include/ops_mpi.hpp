@@ -1,8 +1,10 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
+#include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 #include "task/include/task.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {
@@ -15,10 +17,9 @@ class GutyanskyAMonteCarloMultiDimensionMPI : public BaseTask {
   explicit GutyanskyAMonteCarloMultiDimensionMPI(const InType &in);
 
  private:
-  static void GetScatterParams(int rank, int world_size, int elements_count, int *size, int *displacement);
-  std::vector<int> ScatterA(int rank, int world_size, int rows_a, int cols_a);
-  std::vector<int> ScatterB(int rank, int world_size, int rows_b, int cols_b);
-  void GatherResult(int rank, int world_size, int rows_a, int cols_b, std::vector<int> &res_buffer);
+  static int ComputePackedTaskSize(size_t n_dims);
+  static void PackTaskData(const IntegrationTask &task, std::vector<uint8_t>& buffer);
+  static void UnpackTaskData(const std::vector<uint8_t> &buffer, IntegrationTask& task);
   bool ValidationImpl() override;
   bool PreProcessingImpl() override;
   bool RunImpl() override;

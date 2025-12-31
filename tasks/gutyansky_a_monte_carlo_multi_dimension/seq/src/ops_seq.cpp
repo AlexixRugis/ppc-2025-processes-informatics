@@ -1,9 +1,11 @@
 #include "gutyansky_a_monte_carlo_multi_dimension/seq/include/ops_seq.hpp"
 
 #include <cstddef>
+#include <random>
 #include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
+#include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {
 
@@ -11,18 +13,11 @@ GutyanskyAMonteCarloMultiDimensionSEQ::GutyanskyAMonteCarloMultiDimensionSEQ(con
   SetTypeOfTask(GetStaticTypeOfTask());
 
   GetInput() = in;
-  GetOutput() = {};
+  GetOutput() = 0.0;
 }
 
 bool GutyanskyAMonteCarloMultiDimensionSEQ::ValidationImpl() {
-  if (!GetInput().first.IsValid()) {
-    return false;
-  }
-  if (!GetInput().second.IsValid()) {
-    return false;
-  }
-
-  return GetInput().first.cols == GetInput().second.rows;
+  return GetInput().IsValid();
 }
 
 bool GutyanskyAMonteCarloMultiDimensionSEQ::PreProcessingImpl() {
@@ -30,18 +25,36 @@ bool GutyanskyAMonteCarloMultiDimensionSEQ::PreProcessingImpl() {
 }
 
 bool GutyanskyAMonteCarloMultiDimensionSEQ::RunImpl() {
-  GetOutput().rows = GetInput().first.rows;
-  GetOutput().cols = GetInput().second.cols;
-  GetOutput().data.assign(GetOutput().rows * GetOutput().cols, 0);
+  std::mt19937 gen(12345u);
+  std::uniform_real_distribution<double> distr(0.0, 1.0);
 
-  for (size_t i = 0; i < GetOutput().rows; i++) {
-    for (size_t j = 0; j < GetOutput().cols; j++) {
-      for (size_t k = 0; k < GetInput().first.cols; k++) {
-        GetOutput().data[(i * GetOutput().cols) + j] += GetInput().first.data[(i * GetInput().first.cols) + k] *
-                                                        GetInput().second.data[(k * GetInput().second.cols) + j];
-      }
-    }
+  size_t n_points = GetInput().n_points;
+  size_t n_dims = GetInput().n_dims;
+
+  double volume = 1.0;
+
+  for (size_t i = 0; i < n_dims; i++) {
+    volume *= GetInput().upper_bounds[i] - GetInput().lower_bounds[i];
   }
+
+  FunctionRegistry::IntegralFunction function = GetInput().GetFunction();
+
+  std::vector<double> random_point(n_dims);
+
+  double sum = 0.0;
+
+  for (size_t i = 0; i < n_points; i++) {
+    for (size_t j = 0; j < n_dims; j++) {
+      double lb = GetInput().lower_bounds[j];
+      double rb = GetInput().upper_bounds[j];
+
+      random_point[j] = lb + (distr(gen) * (rb - lb));
+    }
+
+    sum += function(random_point);
+  }
+
+  GetOutput() = volume * (sum / static_cast<double>(n_points));
 
   return true;
 }
