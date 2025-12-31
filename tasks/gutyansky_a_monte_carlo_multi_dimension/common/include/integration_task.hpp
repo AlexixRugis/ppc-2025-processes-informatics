@@ -49,11 +49,11 @@ struct IntegrationTask {
   [[nodiscard]] FunctionRegistry::IntegralFunction GetFunction() const {
     auto func = FunctionRegistry::GetIntegralFunction(func_id);
 
-    if (!func.has_value()) {
-      throw std::runtime_error("Invalid func_id.");
+    if (func.has_value()) {
+      return func->func;
     }
 
-    return FunctionRegistry::GetIntegralFunction(func_id).value().func;
+    throw std::runtime_error("Invalid func_id.");
   }
 
   friend bool operator==(const IntegrationTask &t_left, const IntegrationTask &t_right) {

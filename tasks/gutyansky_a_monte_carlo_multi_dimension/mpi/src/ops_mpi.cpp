@@ -99,7 +99,7 @@ bool GutyanskyAMonteCarloMultiDimensionMPI::RunImpl() {
     PackTaskData(GetInput(), buffer);
   }
 
-  MPI_Bcast(buffer.data(), buffer.size(), MPI_PACKED, 0, MPI_COMM_WORLD);
+  MPI_Bcast(buffer.data(), static_cast<int>(buffer.size()), MPI_PACKED, 0, MPI_COMM_WORLD);
 
   if (rank != 0) {
     UnpackTaskData(buffer, GetInput());
