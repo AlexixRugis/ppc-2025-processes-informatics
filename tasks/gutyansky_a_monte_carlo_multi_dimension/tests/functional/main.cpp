@@ -2,6 +2,7 @@
 #include <stb/stb_image.h>
 
 #include <array>
+#include <cmath>
 #include <cstddef>
 #include <fstream>
 #include <stdexcept>
@@ -9,7 +10,6 @@
 #include <tuple>
 #include <utility>
 #include <vector>
-#include <cmath>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/mpi/include/ops_mpi.hpp"

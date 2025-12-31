@@ -2,8 +2,8 @@
 
 #include <cmath>
 #include <cstddef>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 
