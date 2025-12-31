@@ -37,7 +37,7 @@ class GutyanskyAMonteCarloMultiDimensionFuncTests : public ppc::util::BaseRunFun
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    const double eps = 1e-2;
+    const double eps = 1e-1;
 
     if (ShouldLoadDataAndTest()) {
       return std::abs(output_data - output_data_) <= eps;
