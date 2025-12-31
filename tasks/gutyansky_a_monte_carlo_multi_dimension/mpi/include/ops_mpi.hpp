@@ -18,8 +18,8 @@ class GutyanskyAMonteCarloMultiDimensionMPI : public BaseTask {
 
  private:
   static int ComputePackedTaskSize(size_t n_dims);
-  static void PackTaskData(const IntegrationTask &task, std::vector<uint8_t>& buffer);
-  static void UnpackTaskData(const std::vector<uint8_t> &buffer, IntegrationTask& task);
+  static void PackTaskData(const IntegrationTask &task, std::vector<uint8_t> &buffer);
+  static void UnpackTaskData(const std::vector<uint8_t> &buffer, IntegrationTask &task);
   bool ValidationImpl() override;
   bool PreProcessingImpl() override;
   bool RunImpl() override;
