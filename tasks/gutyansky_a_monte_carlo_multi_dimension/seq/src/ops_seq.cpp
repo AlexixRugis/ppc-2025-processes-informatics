@@ -25,7 +25,8 @@ bool GutyanskyAMonteCarloMultiDimensionSEQ::PreProcessingImpl() {
 }
 
 bool GutyanskyAMonteCarloMultiDimensionSEQ::RunImpl() {
-  std::mt19937 gen(12345u);
+  std::random_device rd;
+  std::mt19937 gen(rd());
   std::uniform_real_distribution<double> distr(0.0, 1.0);
 
   size_t n_points = GetInput().n_points;

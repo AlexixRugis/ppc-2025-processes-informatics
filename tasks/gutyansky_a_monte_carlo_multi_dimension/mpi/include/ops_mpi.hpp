@@ -1,10 +1,10 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
-#include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 #include "task/include/task.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {

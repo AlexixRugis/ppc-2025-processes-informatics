@@ -3,13 +3,13 @@
 
 #include <array>
 #include <cstddef>
-#include <cstdint>
 #include <fstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <cmath>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
 #include "gutyansky_a_monte_carlo_multi_dimension/mpi/include/ops_mpi.hpp"

@@ -2,21 +2,19 @@
 
 #include <cmath>
 #include <cstddef>
-#include <cstdint>
-#include <functional>
-#include <tuple>
 #include <vector>
+#include <stdexcept>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {
 
 struct IntegrationTask {
-  size_t func_id;
-  size_t n_dims;
+  size_t func_id = 0;
+  size_t n_dims = 0;
   std::vector<double> lower_bounds;
   std::vector<double> upper_bounds;
-  size_t n_points;
+  size_t n_points = 0;
 
   [[nodiscard]] bool IsValid() const {
     if (n_dims == 0) {
@@ -43,12 +41,18 @@ struct IntegrationTask {
       return false;
     }
 
-    FunctionRegistry::FunctionDescription descr = func.value();
+    const auto &descr = func.value();
 
     return descr.n_dims == 0 || descr.n_dims == n_dims;
   }
 
   [[nodiscard]] FunctionRegistry::IntegralFunction GetFunction() const {
+    auto func = FunctionRegistry::GetIntegralFunction(func_id);
+
+    if (!func.has_value()) {
+      throw std::runtime_error("Invalid func_id.");
+    }
+
     return FunctionRegistry::GetIntegralFunction(func_id).value().func;
   }
 

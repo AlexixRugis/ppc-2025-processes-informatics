@@ -2,13 +2,14 @@
 
 #include <mpi.h>
 
-#include <array>
 #include <cstddef>
+#include <cstdint>
 #include <random>
 #include <utility>
 #include <vector>
 
 #include "gutyansky_a_monte_carlo_multi_dimension/common/include/common.hpp"
+#include "gutyansky_a_monte_carlo_multi_dimension/common/include/function_registry.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {
 
@@ -61,26 +62,27 @@ int GutyanskyAMonteCarloMultiDimensionMPI::ComputePackedTaskSize(size_t n_dims) 
 void GutyanskyAMonteCarloMultiDimensionMPI::PackTaskData(const IntegrationTask &task, std::vector<uint8_t> &buffer) {
   int position = 0;
 
-  MPI_Pack(&task.func_id, 1, MPI_UINT64_T, buffer.data(), buffer.size(), &position, MPI_COMM_WORLD);
-  MPI_Pack(&task.n_dims, 1, MPI_UINT64_T, buffer.data(), buffer.size(), &position, MPI_COMM_WORLD);
-  MPI_Pack(&task.n_points, 1, MPI_UINT64_T, buffer.data(), buffer.size(), &position, MPI_COMM_WORLD);
-  MPI_Pack(task.lower_bounds.data(), static_cast<int>(task.n_dims), MPI_DOUBLE, buffer.data(), buffer.size(), &position,
-           MPI_COMM_WORLD);
-  MPI_Pack(task.upper_bounds.data(), static_cast<int>(task.n_dims), MPI_DOUBLE, buffer.data(), buffer.size(), &position,
-           MPI_COMM_WORLD);
+  MPI_Pack(&task.func_id, 1, MPI_UINT64_T, buffer.data(), static_cast<int>(buffer.size()), &position, MPI_COMM_WORLD);
+  MPI_Pack(&task.n_dims, 1, MPI_UINT64_T, buffer.data(), static_cast<int>(buffer.size()), &position, MPI_COMM_WORLD);
+  MPI_Pack(&task.n_points, 1, MPI_UINT64_T, buffer.data(), static_cast<int>(buffer.size()), &position, MPI_COMM_WORLD);
+  MPI_Pack(task.lower_bounds.data(), static_cast<int>(task.n_dims), MPI_DOUBLE, buffer.data(),
+           static_cast<int>(buffer.size()), &position, MPI_COMM_WORLD);
+  MPI_Pack(task.upper_bounds.data(), static_cast<int>(task.n_dims), MPI_DOUBLE, buffer.data(),
+           static_cast<int>(buffer.size()), &position, MPI_COMM_WORLD);
 }
 
 void GutyanskyAMonteCarloMultiDimensionMPI::UnpackTaskData(const std::vector<uint8_t> &buffer, IntegrationTask &task) {
   int position = 0;
-  MPI_Unpack(buffer.data(), buffer.size(), &position, &task.func_id, 1, MPI_UINT64_T, MPI_COMM_WORLD);
-  MPI_Unpack(buffer.data(), buffer.size(), &position, &task.n_dims, 1, MPI_UINT64_T, MPI_COMM_WORLD);
-  MPI_Unpack(buffer.data(), buffer.size(), &position, &task.n_points, 1, MPI_UINT64_T, MPI_COMM_WORLD);
+  MPI_Unpack(buffer.data(), static_cast<int>(buffer.size()), &position, &task.func_id, 1, MPI_UINT64_T, MPI_COMM_WORLD);
+  MPI_Unpack(buffer.data(), static_cast<int>(buffer.size()), &position, &task.n_dims, 1, MPI_UINT64_T, MPI_COMM_WORLD);
+  MPI_Unpack(buffer.data(), static_cast<int>(buffer.size()), &position, &task.n_points, 1, MPI_UINT64_T,
+             MPI_COMM_WORLD);
   task.lower_bounds.resize(task.n_dims);
-  MPI_Unpack(buffer.data(), buffer.size(), &position, task.lower_bounds.data(), task.n_dims, MPI_DOUBLE,
-             MPI_COMM_WORLD);
+  MPI_Unpack(buffer.data(), static_cast<int>(buffer.size()), &position, task.lower_bounds.data(),
+             static_cast<int>(task.n_dims), MPI_DOUBLE, MPI_COMM_WORLD);
   task.upper_bounds.resize(task.n_dims);
-  MPI_Unpack(buffer.data(), buffer.size(), &position, task.upper_bounds.data(), task.n_dims, MPI_DOUBLE,
-             MPI_COMM_WORLD);
+  MPI_Unpack(buffer.data(), static_cast<int>(buffer.size()), &position, task.upper_bounds.data(),
+             static_cast<int>(task.n_dims), MPI_DOUBLE, MPI_COMM_WORLD);
 }
 
 bool GutyanskyAMonteCarloMultiDimensionMPI::RunImpl() {
@@ -111,7 +113,7 @@ bool GutyanskyAMonteCarloMultiDimensionMPI::RunImpl() {
 
   size_t size = 0;
 
-  if (static_cast<size_t>(rank) < remainder_size) {
+  if (std::cmp_less(rank, remainder_size)) {
     size = chunk_size + 1;
   } else {
     size = chunk_size;
@@ -119,7 +121,8 @@ bool GutyanskyAMonteCarloMultiDimensionMPI::RunImpl() {
 
   FunctionRegistry::IntegralFunction function = GetInput().GetFunction();
 
-  std::mt19937 gen(12345u + static_cast<unsigned>(rank));
+  std::random_device rd;
+  std::mt19937 gen(rd() + static_cast<unsigned>(rank));
   std::uniform_real_distribution<double> distr(0.0, 1.0);
   std::vector<double> random_point(n_dims);
 

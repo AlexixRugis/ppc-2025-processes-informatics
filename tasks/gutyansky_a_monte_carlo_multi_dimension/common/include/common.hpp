@@ -1,9 +1,8 @@
 #pragma once
 
 #include <string>
-#include <utility>
 
-#include "integration_task.hpp"
+#include "gutyansky_a_monte_carlo_multi_dimension/common/include/integration_task.hpp"
 #include "task/include/task.hpp"
 
 namespace gutyansky_a_monte_carlo_multi_dimension {
