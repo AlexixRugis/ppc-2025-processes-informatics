@@ -115,7 +115,7 @@ TEST_P(GutyanskyAMonteCarloMultiDimensionFuncTests, MonteCarloMultiDimension) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 7> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5", "test_6", "test_7"};
+const std::array<TestType, 8> kTestParam = {"test_1", "test_2", "test_3", "test_4", "test_5", "test_6", "test_7", "test_8"};
 
 const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<GutyanskyAMonteCarloMultiDimensionMPI, InType>(
                                                kTestParam, PPC_SETTINGS_gutyansky_a_monte_carlo_multi_dimension),
@@ -127,7 +127,7 @@ const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 const auto kPerfTestName =
     GutyanskyAMonteCarloMultiDimensionFuncTests::PrintFuncTestName<GutyanskyAMonteCarloMultiDimensionFuncTests>;
 
-INSTANTIATE_TEST_SUITE_P(ColumnSumTests, GutyanskyAMonteCarloMultiDimensionFuncTests, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(MonteCarloTests, GutyanskyAMonteCarloMultiDimensionFuncTests, kGtestValues, kPerfTestName);
 
 }  // namespace
 
